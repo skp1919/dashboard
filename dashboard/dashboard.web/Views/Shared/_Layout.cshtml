@@ -3,44 +3,308 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>@ViewData["Title"] - MyDashboard</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/lib/font-awesome/css/fontawesome.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+
+    <style>
+        .wrapper {
+            display: flex;
+            align-items: stretch;
+        }
+
+        /********************** Start Filters *********************/
+
+        #filters-sidebar {
+            min-width: 250px;
+            max-width: 250px;
+            min-height: 100vh;
+            background: #808080;
+            color: #fff;
+            transition: all 0.3s;
+            border-right: 1px solid #000;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            height: 100vh;
+            z-index: 999;
+            transform-origin: center left; /* Set the transformed position of sidebar to center left side. */
+        }
+
+        #filters-sidebar.active {
+            margin-left: -250px;
+            transform: rotateY(100deg); /* Rotate sidebar vertically by 100 degrees. */
+        }
+
+        #filters-sidebarCollapse span {
+            width: 80%;
+            height: 2px;
+            margin: 0 auto;
+            display: block;
+            background: #555;
+            transition: all 0.8s cubic-bezier(0.810, -0.330, 0.345, 1.375);
+        }
+
+        #filters-sidebarCollapse span:first-of-type {
+            /* rotate first one */
+            transform: rotate(45deg) translate(2px, 2px);
+        }
+
+        #filters-sidebarCollapse span:nth-of-type(2) {
+            /* second one is not visible */
+            opacity: 0;
+        }
+
+        #filters-sidebarCollapse span:last-of-type {
+            /* rotate third one */
+            transform: rotate(-45deg) translate(1px, -1px);
+        }
+
+        #filters-sidebarCollapse.active span {
+            /* no rotation */
+            transform: none;
+            /* all bars are visible */
+            opacity: 1;
+            margin: 5px auto;
+        }
+
+        #filters-sidebarCollapse {
+            background: #808080;
+            color: #fff;
+        }
+
+        #filters-sidebar.active {
+            margin-left: -250px;
+        }
+
+        #filters-sidebar .filters-sidebar-header {
+            padding: 20px;
+            background: #808080;
+        }
+
+        #filters-sidebar ul.components {
+            padding: 20px 0;
+            border-bottom: 1px solid #47748b;
+        }
+
+        #filters-sidebar ul p {
+            color: #fff;
+            padding: 10px;
+        }
+
+        #filters-sidebar ul li a {
+            padding: 10px;
+            font-size: 1.1em;
+            display: block;
+            color: #fff;
+        }
+
+        #filters-sidebar ul li a:hover {
+            color: #7386D5;
+            background: #fff;
+        }
+
+        #filters-sidebar ul li.active > a, a[aria-expanded="true"] {
+            color: #fff;
+            background: #808080;
+        }
+
+        /*************End Filters ***********************/
+
+        /********************** Start Menu*********************/
+
+        #menu-sidebar {
+            min-width: 250px;
+            max-width: 250px;
+            min-height: 100vh;
+            background: #808080;
+            color: #fff;
+            transition: all 0.3s;
+            position: fixed;
+            top: 70px;
+            left: 250px;
+            height: 100vh;
+            z-index: 999;
+            transform-origin: center left; /* Set the transformed position of sidebar to center left side. */
+        }
+        #menu-sidebar.active {
+            margin-left: -250px;
+            transform: rotateY(100deg); /* Rotate sidebar vertically by 100 degrees. */
+        }
+
+        #menu-sidebarCollapse span {
+            width: 80%;
+            height: 2px;
+            margin: 0 auto;
+            display: block;
+            background: #555;
+            transition: all 0.8s cubic-bezier(0.810, -0.330, 0.345, 1.375);
+        }
+
+        #menu-sidebarCollapse span:first-of-type {
+            /* rotate first one */
+            transform: rotate(45deg) translate(2px, 2px);
+        }
+
+        #menu-sidebarCollapse span:nth-of-type(2) {
+            /* second one is not visible */
+            opacity: 0;
+        }
+
+        #menu-sidebarCollapse span:last-of-type {
+            /* rotate third one */
+            transform: rotate(-45deg) translate(1px, -1px);
+        }
+        #menu-sidebarCollapse.active span {
+            /* no rotation */
+            transform: none;
+            /* all bars are visible */
+            opacity: 1;
+            margin: 5px auto;
+        }
+
+        #menu-sidebarCollapse {
+            background: #808080;
+            color: #fff;
+        }
+
+        #menu-sidebar.active {
+            margin-left: -500px;
+        }
+        #menu-sidebar.partialactive {
+            margin-left: -250px;
+        }
+
+        #menu-sidebar .menu-sidebar-header {
+            padding: 20px;
+            background: #808080;
+        }
+
+        #menu-sidebar ul.components {
+            padding: 20px 0;
+            border-bottom: 1px solid #47748b;
+        }
+
+        #menu-sidebar ul p {
+            color: #fff;
+            padding: 10px;
+        }
+
+        #menu-sidebar ul li a {
+            padding: 10px;
+            font-size: 1.1em;
+            display: block;
+            color: #fff;
+        }
+
+        #menu-sidebar ul li a:hover {
+            color: #7386D5;
+            background: #fff;
+        }
+
+        #menu-sidebar ul li.active > a, a[aria-expanded="true"] {
+            color: #fff;
+            background: #808080;
+        }
+
+        /*************End Menu ***********************/
+
+
+        ul ul a {
+            font-size: 0.9em !important;
+            padding-left: 30px !important;
+            background: #808080;
+        }
+
+        .button-container{
+            margin: 4px;
+        }
+
+    </style>
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="button-container">
+                <button type="button" id="filters-sidebarCollapse" class="btn btn-info">
+                    <i class="fas fa-filter"></i>
+                </button>
+                </div>
+            <div class="button-container">
+                <button type="button" id="menu-sidebarCollapse" class="btn btn-info">
+                    <i class="fas fa-align-left"></i>
+                </button>
+            </div>
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">MyDashboard</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                    </ul>
-                </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+
+    <div class="wrapper">
+        <nav id="filters-sidebar">
+            <div class="filters-sidebar-header">
+                <h5>Filters</h5>
+            </div>
+        </nav>
+        <nav id="menu-sidebar">
+            <div class="menu-sidebar-header">
+                <h5>Menu</h5>
+            </div>
+        </nav>
+
+        <div id="content" class="container">
+            <main role="main" class="pb-3">                
+                @RenderBody()
+            </main>
+        </div>
+
     </div>
+
+
+
+
 
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2019 - MyDashboard
         </div>
     </footer>
-        
+
     <script src="~/lib/jquery/dist/jquery.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    <script src="~/lib/font-awesome/js/fontawesome.min.js"></script>
+    <script src="~/lib/font-awesome/js/solid.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            $('#filters-sidebarCollapse').on('click', function () {
+                $('#filters-sidebar').toggleClass('active');
+                if ($('#filters-sidebar').hasClass('active') && $('#menu-sidebar').hasClass('partialactive')) {
+                    $('#menu-sidebar').addClass('active').removeClass('partialactive');
+                }
+                else if ($('#filters-sidebar').hasClass('active') && !$('#menu-sidebar').hasClass('active')){
+
+                }
+                else if (!$('#filters-sidebar').hasClass('active') && $('#menu-sidebar').hasClass('active')) {
+                    $('#menu-sidebar').addClass('partialactive').removeClass('active');
+                }
+            });
+            $('#menu-sidebarCollapse').on('click', function () {
+                $('#menu-sidebar').toggleClass('active');
+            });
+
+        });
+    </script>
+
 
     @RenderSection("Scripts", required: false)
 </body>
